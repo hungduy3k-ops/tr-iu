@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2563eb">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Tiền trọ">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Trọ của Tam Đại Công Chúa - Tính tiền trọ</title>
+<style>
+:root{--blue:#2563eb;--blue2:#1d4ed8;--bg:#f3f6fb;--card:#fff;--text:#172033;--muted:#667085;--line:#e5eaf2;--green:#0f9f6e;--red:#dc2626;--radius:18px}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.45}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+header{background:linear-gradient(135deg,#2563eb,#4f46e5);color:white;padding:24px 16px 30px}
+.wrap{max-width:980px;margin:auto;padding:0 14px}
+.brand{display:flex;align-items:center;gap:12px}.logo{width:48px;height:48px;border-radius:15px;background:#ffffff24;display:grid;place-items:center;font-size:27px}
+h1{font-size:24px;margin:0}header p{margin:7px 0 0;color:#e0e7ff;font-size:14px}
+main{max-width:980px;margin:-16px auto 30px;padding:0 14px}
+.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.stat{background:white;border-radius:16px;padding:14px;box-shadow:0 5px 18px #1720330a;min-width:0}
+.stat .label{font-size:12px;color:var(--muted)}.stat strong{display:block;font-size:clamp(16px,3vw,22px);margin-top:5px;overflow-wrap:anywhere}
+.layout{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+.card{background:var(--card);border:1px solid #e9edf4;border-radius:var(--radius);padding:18px;box-shadow:0 5px 18px #17203308;margin-bottom:14px}
+.card h2{font-size:17px;margin:0 0 4px}.hint{font-size:13px;color:var(--muted);margin:0 0 15px}
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{min-width:0}.field.full{grid-column:1/-1}
+label{display:block;font-size:13px;font-weight:650;margin-bottom:6px}
+input,select,textarea{width:100%;padding:11px 12px;border:1px solid #d8dfeb;border-radius:11px;background:white;color:var(--text);outline:none;min-width:0}
+input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px #2563eb1c}
+small{display:block;color:var(--muted);font-size:11px;margin-top:5px}
+.checkrow{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--muted);margin-top:12px}.checkrow input{width:auto}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}
+.btn{border:0;border-radius:12px;padding:12px 15px;font-weight:700}
+.primary{background:var(--blue);color:white}.primary:hover{background:var(--blue2)}
+.secondary{background:#eef2ff;color:#3730a3}.plain{background:#f1f5f9;color:#334155}.danger{background:#fee2e2;color:#991b1b}
+.totalbox{background:linear-gradient(135deg,#eff6ff,#eef2ff);border:1px solid #dbeafe;border-radius:15px;padding:16px;margin-top:12px}
+.totalbox .big{font-size:28px;font-weight:850;color:#1d4ed8;letter-spacing:-.5px}
+.breakdown{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+.breakdown td{padding:9px 0;border-bottom:1px solid var(--line)}.breakdown td:last-child{text-align:right;font-weight:650}.breakdown tr:last-child td{border-bottom:0}
+.notice{padding:11px 12px;background:#fffbeb;color:#92400e;border-radius:11px;font-size:12px;margin-top:12px}
+.history-item{border:1px solid var(--line);border-radius:13px;padding:12px;margin-top:9px}
+.history-top{display:flex;justify-content:space-between;gap:8px;align-items:start}.history-item strong{font-size:14px}.history-item p{margin:4px 0;color:var(--muted);font-size:12px}
+.history-actions{display:flex;gap:7px;margin-top:9px}.history-actions button{border:0;border-radius:9px;padding:7px 10px;font-size:12px;font-weight:650}
+.empty{color:var(--muted);text-align:center;padding:18px 8px;font-size:13px}
+.datepick{display:grid;grid-template-columns:.8fr 1.2fr 1fr;gap:8px}
+.quick{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}.chip{border:0;background:#eef2ff;color:#3730a3;border-radius:999px;padding:8px 12px;font-size:12px;font-weight:700}.chip:hover{background:#e0e7ff}
+.dateinfo{color:#1d4ed8;font-weight:650;font-size:12px}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:4px 14px 28px}
+@media(max-width:720px){.layout{grid-template-columns:1fr}.summary{gap:7px}.stat{padding:11px}.card{padding:15px}header{padding-top:20px}h1{font-size:22px}}
+@media(max-width:380px){.field-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.summary{grid-template-columns:1fr}.stat{display:flex;justify-content:space-between;align-items:center}.stat strong{margin:0}}
+@media print{body{background:white}.no-print,header p,.actions,footer{display:none!important}header{background:white;color:#111;padding:8px 0}main{margin:0;padding:0}.card,.stat{box-shadow:none;break-inside:avoid}.layout{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="brand"><div class="logo">🏠</div><div><h1>Trọ của Tam Đại Công Chúa</h1><p>Ứng dụng tính tiền trọ rõ ràng, dễ dùng cho mỗi tháng</p></div></div>
+  </div>
+</header>
+<main>
+  <section class="summary">
+    <div class="stat"><span class="label">Tổng tiền phòng tháng này</span><strong id="statTotal">0 ₫</strong></div>
+    <div class="stat"><span class="label">Số người ở</span><strong id="statPeople">1 người</strong></div>
+    <div class="stat"><span class="label">Mỗi người cần trả</span><strong id="statPerPerson">0 ₫</strong></div>
+  </section>
+  <div class="layout">
+    <div>
+      <section class="card">
+        <h2>🧾 Thông tin phòng trọ</h2><p class="hint">Chọn ngày/tháng/năm bằng danh sách hoặc bấm nhanh, không cần gõ.</p>
+        <div class="field-grid">
+          <div class="field full"><label for="roomName">Tên phòng / người thuê</label><input id="roomName" placeholder="Ví dụ: Phòng 203 - Duy" value="Phòng trọ của tôi"></div>
+          <div class="field full"><label>📅 Ngày chốt tiền (ngày / tháng / năm)</label>
+            <div class="datepick"><select id="dayS" aria-label="Ngày"></select><select id="monthS" aria-label="Tháng"></select><select id="yearS" aria-label="Năm"></select></div>
+            <div class="quick no-print"><button type="button" class="chip" id="prevMonth">◀ Tháng trước</button><button type="button" class="chip" id="todayBtn">Hôm nay</button><button type="button" class="chip" id="nextMonth">Tháng sau ▶</button></div>
+            <small class="dateinfo" id="dateInfo"></small><input id="month" type="hidden"></div>
+          <div class="field"><label for="people">Số người ở</label><input id="people" type="number" min="1" max="50" step="1" value="1"></div>
+          <div class="field"><label for="splitMode">Cách chia tiền</label><select id="splitMode"><option value="equal">Chia đều cho mọi người</option><option value="whole">Tính tổng tiền cả phòng</option></select></div>
+        </div>
+      </section>
+      <section class="card">
+        <h2>🏡 Tiền thuê và phí cố định</h2><p class="hint">Nhập số tiền bằng đồng Việt Nam (VNĐ), dấu chấm sẽ tự thêm vào khi bạn gõ.</p>
+        <div class="field-grid">
+          <div class="field"><label for="rent">Tiền thuê phòng (₫)</label><input id="rent" type="text" inputmode="numeric" autocomplete="off" value="2.500.000"></div>
+          <div class="field"><label for="internet">Internet / Wi-Fi (₫)</label><input id="internet" type="text" inputmode="numeric" autocomplete="off" value="100.000"></div>
+          <div class="field"><label for="trash">Rác / vệ sinh (₫)</label><input id="trash" type="text" inputmode="numeric" autocomplete="off" value="30.000"></div>
+          <div class="field"><label for="parking">Giữ xe (₫)</label><input id="parking" type="text" inputmode="numeric" autocomplete="off" value="0"></div>
+          <div class="field"><label for="waterMode">Cách tính nước</label><select id="waterMode"><option value="person">Theo đầu người (giá × số người)</option><option value="meter">Theo khối m³ (đồng hồ nước)</option><option value="fixed">Một mức cho cả phòng</option></select></div>
+          <div class="field"><label for="waterPrice" id="waterPriceLabel">Giá nước (₫/người)</label><input id="waterPrice" type="text" inputmode="numeric" autocomplete="off" value="15.000"></div>
+          <div class="field" id="waterOldWrap"><label for="waterOld">Chỉ số nước đầu kỳ (m³)</label><input id="waterOld" type="number" min="0" step="0.1" value="0"></div>
+          <div class="field" id="waterNewWrap"><label for="waterNew">Chỉ số nước cuối kỳ (m³)</label><input id="waterNew" type="number" min="0" step="0.1" value="0"><small id="waterUsed"></small></div>
+          <div class="field"><label for="otherFee">Phí khác (₫)</label><input id="otherFee" type="text" inputmode="numeric" autocomplete="off" value="0"></div>
+          <div class="field full"><label for="otherNote">Ghi chú phí khác</label><input id="otherNote" placeholder="Ví dụ: phí máy giặt, phí dịch vụ..."></div>
+        </div>
+      </section>
+      <section class="card">
+        <h2>⚡ Tiền điện</h2><p class="hint">Nhập số điện đầu kỳ và cuối kỳ trên công tơ.</p>
+        <div class="field-grid">
+          <div class="field"><label for="electricOld">Chỉ số điện đầu kỳ (kWh)</label><input id="electricOld" type="number" min="0" step="1" value="1000"></div>
+          <div class="field"><label for="electricNew">Chỉ số điện cuối kỳ (kWh)</label><input id="electricNew" type="number" min="0" step="1" value="1020"></div>
+          <div class="field full"><label for="electricPrice">Giá điện chủ trọ thu (₫/kWh)</label><input id="electricPrice" type="text" inputmode="numeric" autocomplete="off" value="3.500"><small>Nhập theo mức giá ghi trong thỏa thuận với chủ trọ. Dấu chấm tự thêm vào.</small></div>
+        </div>
+      </section>
+    </div>
+    <div>
+      <section class="card">
+        <h2>💰 Kết quả tính tiền</h2><p class="hint">Kết quả sẽ tự cập nhật khi thay đổi số liệu.</p>
+        <div class="totalbox"><div class="label">Tổng tiền cả phòng</div><div class="big" id="total">2.700.000 ₫</div><div class="label" id="usageLine">Điện tiêu thụ: 20 kWh</div></div>
+        <table class="breakdown">
+          <tbody id="breakdown"></tbody>
+        </table>
+        <div class="totalbox"><div class="label" id="payLabel">Mỗi người cần trả</div><div class="big" id="perPerson">2.700.000 ₫</div><div class="label" id="splitNote">Đã chia theo số người ở</div></div>
+        <div class="notice" id="warning" hidden></div>
+        <div class="actions no-print">
+          <button class="btn primary" id="saveBtn">💾 Lưu kỳ tính tiền</button>
+          <button class="btn secondary" id="printBtn">🖨️ In / lưu PDF</button>
+          <button class="btn plain" id="exportBtn">⬇️ Xuất CSV</button>
+        </div>
+        <div class="actions no-print"><button class="btn plain" id="clearBtn">Xóa dữ liệu nhập</button></div>
+      </section>
+      <section class="card">
+        <h2>📚 Lịch sử các tháng</h2><p class="hint">Các kỳ đã lưu được giữ trên trình duyệt của thiết bị này.</p>
+        <div id="history"><div class="empty">Chưa có kỳ tính tiền nào được lưu.</div></div>
+        <div class="actions no-print"><button class="btn danger" id="deleteHistoryBtn">Xóa toàn bộ lịch sử</button></div>
+      </section>
+      <section class="card">
+        <h2>💡 Cách dùng nhanh</h2>
+        <p class="hint">1. Điền tiền thuê và phí cố định.<br>2. Nhập chỉ số điện đầu kỳ/cuối kỳ và giá điện.<br>3. Chọn cách tính nước, nhập số người.<br>4. Xem tổng tiền và số tiền mỗi người.<br>5. Nhấn “Lưu kỳ tính tiền” để xem lại sau này.</p>
+        <p class="hint">Lưu ý: Đây là công cụ tính theo các mức phí bạn nhập, không tự xác nhận giá thu thực tế của chủ trọ.</p>
+      </section>
+    </div>
+  </div>
+</main>
+<footer>Trọ của Tam Đại Công Chúa · Dữ liệu được lưu trên trình duyệt của thiết bị này.</footer>
+<script>
+const $ = id => document.getElementById(id);
+const fields = ['roomName','month','people','splitMode','rent','internet','trash','parking','waterMode','waterPrice','waterOld','waterNew','otherFee','otherNote','electricOld','electricNew','electricPrice'];
+const money = n => new Intl.NumberFormat('vi-VN',{style:'currency',currency:'VND',maximumFractionDigits:0}).format(Math.round(n||0));
+const moneyIds=['rent','internet','trash','parking','waterPrice','otherFee','electricPrice'];
+const fmtNum=v=>{const d=String(v).replace(/\D/g,'').replace(/^0+(?=\d)/,'');return d.replace(/\B(?=(\d{3})+(?!\d))/g,'.')};
+const num = id => Math.max(0, moneyIds.includes(id) ? (parseInt(String($(id).value).replace(/\D/g,''),10)||0) : (Number($(id).value)||0));
+moneyIds.forEach(id=>{const el=$(id);
+  el.addEventListener('input',()=>{const pos=el.selectionStart;const digitsBefore=el.value.slice(0,pos).replace(/\D/g,'').length;el.value=fmtNum(el.value);let n=0,i=0;while(i<el.value.length&&n<digitsBefore){if(/\d/.test(el.value[i]))n++;i++}try{el.setSelectionRange(i,i)}catch(e){}});
+  el.addEventListener('focus',()=>setTimeout(()=>el.select(),0));
+  el.addEventListener('blur',()=>{if(el.value==='')el.value='0';calculate()});
+});
+const today = new Date();
+const pad = n => String(n).padStart(2,'0');
+const daysIn = (y,m) => new Date(y,m,0).getDate();
+const fmtDate = iso => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso||''); return m ? `${m[3]}/${m[2]}/${m[1]}` : ''; };
+const fmtMonth = ym => { const m = /^(\d{4})-(\d{2})/.exec(ym||''); return m ? `Tháng ${Number(m[2])}/${m[1]}` : 'Chưa chọn tháng'; };
+function buildMonthYear(){
+  $('monthS').innerHTML = Array.from({length:12},(_,i)=>`<option value="${i+1}">Tháng ${i+1}</option>`).join('');
+  const y0 = today.getFullYear();
+  $('yearS').innerHTML = Array.from({length:8},(_,i)=>`<option value="${y0-5+i}">${y0-5+i}</option>`).join('');
+}
+function ensureYear(y){
+  if(![...$('yearS').options].some(o=>Number(o.value)===y)){
+    const opt=document.createElement('option');opt.value=y;opt.textContent=y;
+    $('yearS').appendChild(opt);
+    [...$('yearS').options].sort((a,b)=>a.value-b.value).forEach(o=>$('yearS').appendChild(o));
+  }
+}
+function setDate(y,m,d){
+  ensureYear(y);$('yearS').value=y;$('monthS').value=m;
+  fillDays(Math.min(d,daysIn(y,m)));syncDate();
+}
+function fillDays(keep){
+  const y=Number($('yearS').value),m=Number($('monthS').value),n=daysIn(y,m);
+  const cur=keep||Number($('dayS').value)||1;
+  $('dayS').innerHTML=Array.from({length:n},(_,i)=>`<option value="${i+1}">Ngày ${i+1}</option>`).join('');
+  $('dayS').value=Math.min(cur,n);
+}
+function syncDate(){
+  const y=Number($('yearS').value),m=Number($('monthS').value),d=Number($('dayS').value);
+  $('month').value=`${y}-${pad(m)}`;
+  $('dateInfo').textContent=`Ngày chốt: ${pad(d)}/${pad(m)}/${y} · Kỳ tiền: tháng ${m}/${y}`;
+  calculate();
+}
+function shiftMonth(delta){
+  let y=Number($('yearS').value),m=Number($('monthS').value)+delta,d=Number($('dayS').value);
+  if(m<1){m=12;y--}if(m>12){m=1;y++}
+  setDate(y,m,d);
+}
+let lastResult = null;
+function calculate(){
+  const people = Math.max(1, Math.floor(num('people')));
+  const oldMeter = num('electricOld'), newMeter = num('electricNew');
+  const kwh = Math.max(0, newMeter-oldMeter);
+  const electric = kwh*num('electricPrice');
+  const waterMode = $('waterMode').value;
+  const waterQty = Math.round(Math.max(0, num('waterNew')-num('waterOld'))*100)/100;
+  let water = waterMode==='person' ? num('waterPrice')*people : waterMode==='fixed' ? num('waterPrice') : num('waterPrice')*waterQty;
+  $('waterOldWrap').style.display = $('waterNewWrap').style.display = waterMode==='meter' ? '' : 'none';
+  $('waterPriceLabel').textContent = waterMode==='person' ? 'Giá nước (₫/người)' : waterMode==='meter' ? 'Giá nước (₫/m³)' : 'Tiền nước cả phòng (₫)';
+  $('waterUsed').textContent = `Đã dùng: ${waterQty} m³`;
+  const rent=num('rent'), internet=num('internet'), trash=num('trash'), parking=num('parking'), other=num('otherFee');
+  const rows=[
+    ['Tiền thuê phòng',rent],
+    ['Tiền điện ('+kwh+' kWh)',electric],
+    [waterMode==='person'?'Tiền nước ('+people+' người)':waterMode==='fixed'?'Tiền nước (cả phòng)':'Tiền nước ('+waterQty+' m³)',water],
+    ['Internet / Wi-Fi',internet],
+    ['Rác / vệ sinh',trash],
+    ['Giữ xe',parking],
+    [($('otherNote').value.trim()||'Phí khác'),other]
+  ];
+  const total=rows.reduce((s,r)=>s+r[1],0);
+  const per= $('splitMode').value==='equal' ? total/people : total;
+  $('statTotal').textContent=money(total);
+  $('statPeople').textContent=people+' người';
+  $('statPerPerson').textContent=money($('splitMode').value==='equal'?per:total);
+  $('total').textContent=money(total);
+  $('perPerson').textContent=money(per);
+  $('payLabel').textContent=$('splitMode').value==='equal'?'Mỗi người cần trả':'Tổng tiền cả phòng';
+  $('splitNote').textContent=$('splitMode').value==='equal'?`Tổng ${money(total)} chia đều cho ${people} người`:'Chế độ xem tổng tiền cả phòng, không chia đầu người';
+  $('usageLine').textContent=`Điện tiêu thụ: ${kwh} kWh · Nước: ${waterMode==='meter'?waterQty+' m³':waterMode==='person'?people+' người':'mức cố định'}`;
+  $('breakdown').innerHTML=rows.map(r=>`<tr><td>${escapeHtml(r[0])}</td><td>${money(r[1])}</td></tr>`).join('')+`<tr><td><strong>TỔNG CỘNG</strong></td><td><strong>${money(total)}</strong></td></tr>`;
+  const warn = $('warning');
+  if(newMeter<oldMeter){warn.hidden=false;warn.textContent='Chỉ số điện cuối kỳ nhỏ hơn đầu kỳ. Vui lòng kiểm tra lại công tơ.'}
+  else if(waterMode==='meter' && num('waterNew')<num('waterOld')){warn.hidden=false;warn.textContent='Chỉ số nước cuối kỳ nhỏ hơn đầu kỳ. Vui lòng kiểm tra lại đồng hồ nước.'}
+  else if(num('people')<1){warn.hidden=false;warn.textContent='Số người ở phải từ 1 trở lên.'}
+  else{warn.hidden=true;warn.textContent=''}
+  lastResult={roomName:$('roomName').value,month:$('month').value,date:`${$('yearS').value}-${pad($('monthS').value)}-${pad($('dayS').value)}`,people,rows,total,perPerson:per,splitMode:$('splitMode').value,kwh,waterMode};
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function getHistory(){try{return JSON.parse(localStorage.getItem('troOiHistory')||'[]')}catch(e){return []}}
+function setHistory(a){localStorage.setItem('troOiHistory',JSON.stringify(a))}
+function snapshot(){const data={};fields.forEach(id=>data[id]=$(id).value);['dayS','monthS','yearS'].forEach(id=>data[id]=$(id).value);return data}
+function restore(data){
+  fields.forEach(id=>{if(data[id]!==undefined)$(id).value=data[id]});
+  if(data.waterQty!==undefined && data.waterNew===undefined){$('waterOld').value=0;$('waterNew').value=data.waterQty}
+  moneyIds.forEach(id=>$(id).value=fmtNum($(id).value));
+  if(data.yearS){setDate(Number(data.yearS),Number(data.monthS),Number(data.dayS))}
+  else{const m=/^(\d{4})-(\d{2})/.exec(data.month||'');if(m)setDate(Number(m[1]),Number(m[2]),1);else calculate()}
+}
+function renderHistory(){
+ const hist=getHistory(), el=$('history');
+ if(!hist.length){el.innerHTML='<div class="empty">Chưa có kỳ tính tiền nào được lưu.</div>';return}
+ const list=hist.map((h,idx)=>({h,idx})).sort((a,b)=>String(b.h.date||b.h.month+'-01').localeCompare(String(a.h.date||a.h.month+'-01'))||String(b.h.savedAt).localeCompare(String(a.h.savedAt)));
+ el.innerHTML=list.map(({h,idx})=>`<div class="history-item"><div class="history-top"><div><strong>${escapeHtml(h.roomName||'Phòng trọ')} · ${escapeHtml(fmtMonth(h.month))}</strong><p>${h.date?'📅 Chốt ngày '+fmtDate(h.date)+' · ':''}${h.people} người · Điện ${h.kwh} kWh</p><p>Lưu lúc ${new Date(h.savedAt).toLocaleString('vi-VN')}</p></div><strong>${money(h.total)}</strong></div><div class="history-actions"><button class="secondary" data-load="${idx}">Mở lại</button><button class="danger" data-delete="${idx}">Xóa</button></div></div>`).join('');
+ el.querySelectorAll('[data-load]').forEach(b=>b.addEventListener('click',()=>{const h=getHistory()[Number(b.dataset.load)];if(h){restore(h.inputs);window.scrollTo({top:0,behavior:'smooth'})}}));
+ el.querySelectorAll('[data-delete]').forEach(b=>b.addEventListener('click',()=>{const a=getHistory();a.splice(Number(b.dataset.delete),1);setHistory(a);renderHistory()}));
+}
+fields.forEach(id=>$(id).addEventListener('input',calculate));
+$('waterMode').addEventListener('change',calculate);
+['monthS','yearS'].forEach(id=>$(id).addEventListener('change',()=>{fillDays();syncDate()}));
+$('dayS').addEventListener('change',syncDate);
+$('prevMonth').addEventListener('click',()=>shiftMonth(-1));
+$('nextMonth').addEventListener('click',()=>shiftMonth(1));
+$('todayBtn').addEventListener('click',()=>setDate(today.getFullYear(),today.getMonth()+1,today.getDate()));
+$('splitMode').addEventListener('change',calculate);
+$('saveBtn').addEventListener('click',()=>{
+ calculate();if(!lastResult)return;
+ const h=getHistory();const item={...lastResult,inputs:snapshot(),savedAt:new Date().toISOString()};
+ const index=h.findIndex(x=>x.month===item.month&&x.roomName===item.roomName);
+ if(index>=0)h[index]=item;else h.push(item);
+ setHistory(h);renderHistory();alert('Đã lưu kỳ tính tiền trên thiết bị này!');
+});
+$('printBtn').addEventListener('click',()=>{calculate();window.print()});
+$('exportBtn').addEventListener('click',()=>{
+ calculate();const lines=[['Phòng',lastResult.roomName],['Ngày chốt',fmtDate(lastResult.date)],['Kỳ tiền',fmtMonth(lastResult.month)],['Số người',lastResult.people],['Số điện tiêu thụ (kWh)',lastResult.kwh],...lastResult.rows.map(r=>[r[0],Math.round(r[1])]),['TỔNG CỘNG',Math.round(lastResult.total)],['Mỗi người',Math.round(lastResult.perPerson)]];
+ const csv='\ufeff'+lines.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');
+ const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='tinh-tien-tro-'+(lastResult.date||lastResult.month||'thang')+'.csv';a.click();URL.revokeObjectURL(url);
+});
+$('clearBtn').addEventListener('click',()=>{
+ if(!confirm('Xóa các số liệu đang nhập và đưa về mẫu ban đầu? Lịch sử đã lưu sẽ không bị xóa.'))return;
+ $('roomName').value='Phòng trọ của tôi';$('people').value=1;$('splitMode').value='equal';$('rent').value=0;$('internet').value=0;$('trash').value=0;$('parking').value=0;$('waterMode').value='person';$('waterPrice').value=0;$('waterOld').value=0;$('waterNew').value=0;$('otherFee').value=0;$('otherNote').value='';$('electricOld').value=0;$('electricNew').value=0;$('electricPrice').value=0;calculate();
+});
+$('deleteHistoryBtn').addEventListener('click',()=>{if(confirm('Bạn chắc chắn muốn xóa toàn bộ lịch sử đã lưu?')){localStorage.removeItem('troOiHistory');renderHistory()}});
+buildMonthYear();setDate(today.getFullYear(),today.getMonth()+1,today.getDate());renderHistory();
+if('serviceWorker' in navigator && location.protocol.startsWith('http')){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}
+</script>
+</body>
+</html>
